@@ -12,6 +12,10 @@ for work in works:
         header = work.find("h4", { "class" : "heading" })
         collection = header.select_one("a")
         tags = work.find("ul", {"class" : "tags commas"})
+
+        #tag specifics
+        ships = tags.find_all("li", {"class" : "relationships"})
+        characters = tags.find_all("li", {"class" : "characters"})
         
         user_e = collection.next_element.next_element
         user_e1 = user_e.next_element.next_element
@@ -36,4 +40,13 @@ for work in works:
             email = email_location.text
             print("email: " + email)
             print("tags: " + tags.text)
+            
+            print("Relationships: ")
+            for ship in ships:
+                print(ship.text)
+                
+            print("Characters: ")
+            for character in characters:
+                print(character.text)
+
             
