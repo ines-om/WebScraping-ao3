@@ -1,0 +1,83 @@
+#Credits to Nelson, an employee at Picnic that helped me perfect my code!
+
+from bs4 import BeautifulSoup
+import random
+import requests
+import lxml
+import time
+
+
+def GET_UA():
+    uastrings = ["Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36",\
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36",\
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25",\
+                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0",\
+                "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36",\
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36",\
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/600.1.17 (KHTML, like Gecko) Version/7.1 Safari/537.85.10",\
+                "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",\
+                "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0",\
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36"\
+                ]
+    return random.choice(uastrings)
+
+i = 1
+while (i < 100):
+    try:
+        headers = {'User-Agent': GET_UA()}
+        
+        if i % 10 == 0:
+            print('Page',i, 10)
+            time.sleep(15)
+        else:
+            time.sleep(5)
+            print('Page',i, 2)
+        
+        page = requests.get("https://archiveofourown.org/collections?page=" + str(i) + "&sort_column=collections.created_at&sort_direction=DESC", headers=headers)
+        page_html = BeautifulSoup(page.content, "lxml")
+        
+        works = page_html.find_all("li", {"role" : "article"})
+
+        
+        
+        for work in works:
+            if work.find("h4", { "class" : "heading" }) is not None:
+                header = work.find("h4", { "class" : "heading" })
+                collection = header.select_one("a")
+                user_e = collection.next_element.next_element
+                user_e1 = user_e.next_element.next_element
+                user_e2 = user_e1.next_element.next_element
+                user = user_e2["href"]
+                user_link =user.replace("/users", "https://archiveofourown.org/users")
+            
+                user_page = requests.get(user_link, headers=headers)
+                time.sleep(1)
+                user_page_html = BeautifulSoup(user_page.content, "lxml")
+                navigation = user_page_html.find("ul", {"class" : "navigation actions"})
+                #print("navigation: " + navigation)
+
+                dashboard = navigation.select_one("a")
+                
+
+                user_prof_base = dashboard["href"] 
+                profile_link = user_prof_base.replace("/users" , "https://archiveofourown.org/users")
+                #print("Profile link: " + profile_link)
+
+
+                profiles = requests.get(profile_link, headers=headers)
+                time.sleep(1)
+                profile_html = BeautifulSoup(profiles.content, "lxml")
+                home_profile = profile_html.find("div", {"class" : "user home profile"})
+                #print("home_profile: ", home_profile)
+                email_identifier = home_profile.find("dt", {"class" : "email"})
+                #print("email_identifier: ", email_identifier)
+                
+                if email_identifier is not None:
+                    email_location = home_profile.find("dd", {"class" : "email"})
+                    email = email_location.text
+                    print('Email:',email)    
+        i += 1
+    except Exception:
+        time.sleep(60)
+        i += 1
+
