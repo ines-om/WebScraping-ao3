@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import lxml
+import time
 
 
 i = 1
@@ -39,4 +40,7 @@ while (i < 4000):
                 email_location = home_profile.find("dd", {"class" : "email"})
                 email = email_location.text
                 print(email)    
+                
+            sleep(1)
+            
     i += 1  
