@@ -4,5 +4,7 @@ I'm currently involved in a project related to providing fandom creatives a new 
 	The profiles picked out were chosen based on their presence in the "recent" section of Archive of Our Own pages.
 
 Other relevant information to be scraped will be:
-  - tags of the work they publish ( a.k.a fandoms they're involved with)
+  - tags of the work they publish ( a.k.a fandoms they're involved with) - both characters and ships
   - Their date of birth (for now, it's only a possibility but the app to be advertised for *is* GenZ centric)
+
+Data is stored in csv file.
