@@ -21,6 +21,11 @@ def GET_UA():
                 ]
     return random.choice(uastrings)
 
+filename = "Collections Scrape.csv"
+f = open(filename, "w")
+header = "Username: , Email: \n"
+f.write(header)
+
 i = 1
 while (i < 100):
     try:
@@ -73,9 +78,12 @@ while (i < 100):
                 #print("email_identifier: ", email_identifier)
                 
                 if email_identifier is not None:
+                    f.write(username + ",")
                     email_location = home_profile.find("dd", {"class" : "email"})
                     email = email_location.text
-                    print('Email:',email)    
+                    print('Email:',email)   
+                    f.write(email + ",")
+                    f.write("\n")
         i += 1
     except Exception:
         time.sleep(60)
