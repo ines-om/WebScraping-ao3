@@ -7,6 +7,11 @@ page_html = BeautifulSoup(page.content, "lxml")
 
 works = page_html.find_all("li", {"role" : "article"})
 
+filename = "Recent Works Scrape.csv"
+f = open(filename, "w")
+header = "Username: , Email: , Ships: , Characters: \n"
+f.write(header)
+
 for work in works:
     if work.find("h4", { "class" : "heading" }) is not None:
         header = work.find("h4", { "class" : "heading" })
@@ -39,14 +44,19 @@ for work in works:
             email_location = home_profile.find("dd", {"class" : "email"})
             email = email_location.text
             print("email: " + email)
-            print("tags: " + tags.text)
-            
-            print("Relationships: ")
-            for ship in ships:
-                print(ship.text)
-                
-            print("Characters: ")
-            for character in characters:
-                print(character.text)
+            f.write(username + ",")
+            f.write(email + ",")
 
-            
+            for ship in ships:
+                ship_text = ship.text
+                f.write(ship_text + "; ")
+
+             f.write(",")
+                
+             for character in characters:
+                ch_text = character.text
+                f.write(ch_text + "; ")
+                
+                
+             f.write("\n")
+
