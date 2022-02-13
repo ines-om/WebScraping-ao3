@@ -19,6 +19,11 @@ def GET_UA():
                 ]
     return random.choice(uastrings)
 
+filename = "Advanced Search Scrape.csv"
+f = open(filename, "w")
+header = "Username: , Email: , Ships: , Characters: \n"
+f.write(header)
+
 i = 1
 while (i < 100):
     try:
@@ -56,7 +61,7 @@ while (i < 100):
                     dashboard = navigation.select_one("a")
                     user_prof_base = dashboard["href"] + "/profile"
                     profile_link = user_prof_base.replace("/users" , "https://archiveofourown.org/users")
-                    print("Profile: " + profile_link)
+                    #print("Profile: " + profile_link)
 
                     profiles = requests.get(profile_link)
                     profile_html = BeautifulSoup(profiles.content, "lxml")
@@ -64,16 +69,24 @@ while (i < 100):
                     
                     if home_profile.find("dt", {"class" : "email"}) is not None:
                         email_location = home_profile.find("dd", {"class" : "email"})
-                        email = email_location.text
-                        print("email: " + email )
+                        email = email_location.text 
+                        #print("email: " + email )
+                        f.write(username + ",")
+                        f.write(email + ",")
 
                         print("Relationships: ")
                         for ship in ships:
                             print(ship.text)
+                            f.write(ship_text + "; ")
+
+                        f.write(",")
                         
                         print("Characters: ")
                         for character in characters:
                             print(character.text)
+                            f.write(ch_text + "; ")
+
+                        f.write("\n")
         i += 1
     except Exception:
         time.sleep(120)            
