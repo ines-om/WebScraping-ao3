@@ -1,4 +1,4 @@
-#Credits to Nelson, an employee at Picnic that helped me perfect my code!
+#Credits to Nelson who helped me perfect my code!
 
 from bs4 import BeautifulSoup
 import random
